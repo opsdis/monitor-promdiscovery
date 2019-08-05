@@ -7,6 +7,8 @@ The tool is typical ran from cron or equivalent tools to check in Op5 Monitor fo
 
 # Flow
 
+![Flow overview](https://bitbucket.org/opsdis/monitor-promdiscovery/raw/master/doc/overview.png)
+
  1. *monitor-promdiscovery* is executed on regular interval, e.g. every minute, by cron.
  2. *monitor-promdiscovery* do a filter query against configured Monitor instance for all host that is part of a specific hostgroup. All hosts in the hostgroup will by the *monitor-exporter* be scraped for all its services performance data. 
  3. *monitor-promdiscovery* check against the configured file-based discovery if any host from the above call are new or not existing anymore.
