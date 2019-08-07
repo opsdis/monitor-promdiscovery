@@ -26,7 +26,7 @@ from pythonjsonlogger import jsonlogger
 logger = logging.getLogger('monitor-promdiscovery')
 
 
-#def configure_logger(log_level="INFO", log_filename=None, format=None):
+# def configure_logger(log_level="INFO", log_filename=None, format=None):
 def configure_logger(config):
     format, log_filename, log_level = read_config(config)
 
@@ -61,24 +61,28 @@ def read_config(config):
     return format, log_filename, log_level
 
 
-def error(message):
-    logger.error('{}'.format(message))
+def error(message, json_dict=None):
+    logit(logger.error, json_dict, message)
+
+
+def warn(message, json_dict=None):
+    logit(logger.warning, json_dict, message)
 
 
 def info(message, json_dict=None):
+    logit(logger.info, json_dict, message)
+
+
+def logit(log_func, json_dict, message):
     if json_dict:
-        logger.info('{}'.format(message), extra=json_dict)
+        log_func('{}'.format(message), extra=json_dict)
     else:
-        logger.info('{}'.format(message))
+        log_func('{}'.format(message))
 
 
 def info_response_time(message: str, r_time: float):
     response_time = {"response_time_seconds": r_time}
     logger.info('{}'.format(message), extra=response_time)
-
-
-def warn(message):
-    logger.warning('{}'.format(message))
 
 
 class CustomJsonFormatter(jsonlogger.JsonFormatter):
