@@ -20,7 +20,7 @@
 """
 import os
 import yaml
-
+import log
 
 class PromDis(object):
 
@@ -54,7 +54,9 @@ class PromDis(object):
         '''
         if self.set_of_targets == self.set_of_monitor_hosts and \
                 self.existing_labels == self.labels:
+            log.info("Monitor and service discovery file match")
             return True
+        log.info("Monitor and service discovery file not match")
         return False
 
     def update_targets(self):
@@ -62,9 +64,14 @@ class PromDis(object):
         Write a new sd_file
         :return:
         '''
-        with open(self.file_name, 'w') as filetowrite:
-            targets = {}
-            targets['labels'] = self.labels
-            targets['targets'] = sorted(self.monitor_hosts)
-            targets_list = [targets]
-            yaml.dump(targets_list, filetowrite, default_flow_style=False)
+        try:
+            with open(self.file_name, 'w') as filetowrite:
+                targets = {}
+                targets['labels'] = self.labels
+                targets['targets'] = sorted(self.monitor_hosts)
+                targets_list = [targets]
+                yaml.dump(targets_list, filetowrite, default_flow_style=False)
+                log.info("Service discovery file created {}".format(self.file_name))
+        except (Exception) as err:
+            log.error("{}".format(str(err)))
+            raise err

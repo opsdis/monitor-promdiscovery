@@ -22,6 +22,7 @@ import argparse
 import yaml
 import prom as Prom
 import monitor as Monitor
+import log
 
 
 def main():
@@ -29,6 +30,9 @@ def main():
 
     parser.add_argument('-f', '--configfile',
                         dest="configfile", help="configuration file")
+
+    parser.add_argument('-F', '--force', action="store_true",
+                    dest="force", help="force write of service discovery file")
 
     args = parser.parse_args()
 
@@ -39,11 +43,15 @@ def main():
 
     config = read_config(config_file)
 
+
+    #log.configure_logger("monitor-promdiscovery", 'INFO')
+    log.configure_logger(config)
+    log.info("Start synchronizing")
     monitor = Monitor.MonitorConfig(config)
     promdis = Prom.PromDis(config, monitor.get_hosts_by_hostgroup())
 
     # print (promdis.match())
-    if not promdis.match():
+    if not promdis.match() or args.force:
         promdis.update_targets()
 
 

@@ -20,7 +20,8 @@
 """
 import requests
 import json
-
+import log
+import time
 requests.packages.urllib3.disable_warnings()
 
 
@@ -78,7 +79,7 @@ class MonitorConfig:
         :param path:
         :return:
         '''
-
+        start_time = time.time()
         try:
 
             r = requests.get(self.get_url() + path, auth=self.get_auth(), headers=self.get_header(),
@@ -86,13 +87,17 @@ class MonitorConfig:
 
             if r.status_code == 200 or r.status_code == 404:
                 status = r.status_code
-
             else:
                 r.raise_for_status()
 
             return r.content, r.status_code
 
         except (requests.exceptions.HTTPError) as err:
+            log.warn("{}".format(str(err)))
             raise err
         except (requests.exceptions.RequestException) as err:
+            log.warn("{}".format(str(err)))
             raise err
+        finally:
+            request_time = int((time.time() - start_time) * 1000)/1000
+            log.info_response_time("Response time Monitor", request_time)
