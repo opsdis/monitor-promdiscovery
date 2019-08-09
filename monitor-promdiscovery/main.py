@@ -26,7 +26,7 @@ import log
 
 
 def main():
-    parser = argparse.ArgumentParser(description='cmdb2monitor')
+    parser = argparse.ArgumentParser(description='monitor-promdiscovery')
 
     parser.add_argument('-f', '--configfile',
                         dest="configfile", help="configuration file")
@@ -43,8 +43,6 @@ def main():
 
     config = read_config(config_file)
 
-
-    #log.configure_logger("monitor-promdiscovery", 'INFO')
     log.configure_logger(config)
     log.info("Start synchronizing")
     monitor = Monitor.MonitorConfig(config)
