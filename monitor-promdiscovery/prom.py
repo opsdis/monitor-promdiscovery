@@ -54,9 +54,9 @@ class PromDis(object):
         '''
         if self.set_of_targets == self.set_of_monitor_hosts and \
                 self.existing_labels == self.labels:
-            log.info("Monitor and service discovery file match")
+            log.info("Monitor and service discovery file match - {} target entries".format(len(self.set_of_monitor_hosts)))
             return True
-        log.info("Monitor and service discovery file not match")
+        log.info("Monitor and service discovery file not match - {} target entries in Monitor and {} entries in service discovery".format(len(self.set_of_monitor_hosts),len(self.set_of_targets)))
         return False
 
     def update_targets(self):
