@@ -16,7 +16,7 @@ The tool is typical ran from cron or equivalent tools to check in Op5 Monitor fo
  5. If the file is updated, Prometheus will reload the files configuration.
 
 # Running 
-	python monitor-promdiscovery -f ./config.yml
+	python -m monitor_promdiscovery -f ./config.yml
 
 # Configuration
 The *monitor-promdiscovery* configuration file should be self explained:
