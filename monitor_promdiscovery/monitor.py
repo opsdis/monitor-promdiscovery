@@ -20,7 +20,7 @@
 """
 import requests
 import json
-import log
+import monitor_promdiscovery.log as log
 import time
 requests.packages.urllib3.disable_warnings()
 

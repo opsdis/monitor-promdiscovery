@@ -20,9 +20,9 @@
 """
 import argparse
 import yaml
-import prom as Prom
-import monitor as Monitor
-import log
+import monitor_promdiscovery.prom as Prom
+import monitor_promdiscovery.monitor as Monitor
+import monitor_promdiscovery.log as log
 
 
 def main():

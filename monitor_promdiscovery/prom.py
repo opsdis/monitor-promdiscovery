@@ -20,7 +20,7 @@
 """
 import os
 import yaml
-import log
+import monitor_promdiscovery.log as log
 
 class PromDis(object):
 

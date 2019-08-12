@@ -1,4 +1,4 @@
-import main as Main
+import monitor_promdiscovery.main as Main
 
 
 if __name__ == "__main__":
