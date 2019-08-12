@@ -26,14 +26,11 @@ from pythonjsonlogger import jsonlogger
 logger = logging.getLogger('monitor-promdiscovery')
 
 
-# def configure_logger(log_level="INFO", log_filename=None, format=None):
 def configure_logger(config):
-    format, log_filename, log_level = read_config(config)
+    log_filename, log_level = read_config(config)
 
-    if format == "day" and log_filename:
-        hdlr = logging.FileHandler(log_filename + '_{:%Y-%m-%d}.log'.format(datetime.datetime.now()))
-    elif log_filename:
-        hdlr = logging.FileHandler(log_filename + '.log')
+    if log_filename:
+        hdlr = logging.FileHandler(log_filename)
     else:
         hdlr = logging.StreamHandler()
 
@@ -52,13 +49,9 @@ def read_config(config):
     if 'logger' in config:
         if 'logfile' in config['logger']:
             log_filename = config['logger']['logfile']
-        if 'format' in config['logger']:
-            log_filename = config['logger']['format']
-            format = config['logger']['format']
         if 'level' in config['logger']:
-            log_filename = config['logger']['level']
             log_level = config['logger']['level']
-    return format, log_filename, log_level
+    return log_filename, log_level
 
 
 def error(message, json_dict=None):
