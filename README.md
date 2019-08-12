@@ -17,6 +17,27 @@ The tool is typical ran from cron or equivalent tools to check in Op5 Monitor fo
 
 # Running 
 	python -m monitor_promdiscovery -f ./config.yml
+	
+# Installing
+1. Check out the git repo.
+2. Install dependency
+    
+    `pip install -r requirements.txt`
+     
+3. Build a distribution 
+
+    `python setup.py sdist`
+
+4. Install locally
+ 
+    `pip install dist/monitor-promdiscovery-X.Y.Z.tar.gz`
+     
+5. Run
+
+    `python -m monitor_promdiscovery -f some_config.yml`
+
+
+
 
 # Configuration
 The *monitor-promdiscovery* configuration file should be self explained:
