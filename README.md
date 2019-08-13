@@ -42,6 +42,7 @@ The tool is typical ran from cron or equivalent tools to check in Op5 Monitor fo
 # Configuration
 The *monitor-promdiscovery* configuration file should be self explained:
 ```yaml
+
 op5monitor:  
   url: https://monitor.local  
   user: monitor  
@@ -56,11 +57,21 @@ prometheus:
   labels:  
     source: monitor  
     env: prod
+
+logger:
+  # Path and name for the log file. If not set sent to stdout
+  logfile: monitor-promdiscovery.log
+  # Format if day will have current day as post fix
+  # format: day
+  # Log level
+  #level: INFO
+
 ``` 
 
 ## Promethues configuration
 The Prometheus configuration file would typical have the following job configuration in the scrape_configs section for the *monitor-exporter*:  
 ```yaml
+
   - job_name: 'op5'
     scrape_interval: 2m
     metrics_path: /metrics
@@ -75,6 +86,7 @@ The Prometheus configuration file would typical have the following job configura
       - target_label: __address__
         # The address for the monitor-exporter
         replacement: localhost:5000
+
 ```
 
 # System requirement
