@@ -79,6 +79,7 @@ The Prometheus configuration file would typical have the following job configura
 
 # System requirement
 Python 3.6
-For additional packages see `requirements.txt`
+
+For required packages please review `requirements.txt`
 
 
