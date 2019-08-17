@@ -1,3 +1,5 @@
+[![Build Status](https://api.travis-ci.org/opsdis/monitor-promdiscovery.svg?branch=master)](https://api.travis-ci.org/opsdis/monitor-promdiscovery)
+
 monitor-promdiscovery
 ------------------------
 
