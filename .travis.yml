@@ -7,7 +7,7 @@ install:
 script:
   - python -m unittest discover -v
   - coverage run  -m unittest discover
-  - coverage report  monitor-promdiscovery/*
+  - coverage report  monitor_promdiscovery/*
   - python setup.py sdist
 
 before_deploy:
