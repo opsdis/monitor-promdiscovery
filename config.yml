@@ -1,17 +1,22 @@
-op5monitor:
-  url: https://monitor.xyz
-  user: monitor
-  passwd: monitor
-  # The hostgroup used to select hosts as targets
-  hostgroup: prometheus
+# The system property must be set to the same name as the definition if used
+# if not set it must be set with the switch -s
+system: icinga2
 
-prometheus:
-  # path where to create the file-based discovery file
-  sd_file: <sd_directory>/monitor_sd.yml
-  # Additional labels to tag metrics with
-  labels:
-    source: monitor
-    env: prod
+icinga2:
+  url: https://127.0.0.1:5665
+  user: root
+  passwd: cf593406ffcfd2ef
+  # The hostgroup used to select hosts as targets
+  hostgroup:
+    - network_switches
+    - linux_servers
+  prometheus:
+    # path where to create the file-based discovery file
+    sd_file: /home/andersh/programs/prometheus/sd/icinga2_sd.yml
+    # Additional labels to tag metrics with
+    labels:
+      source: icinga2
+      env: prod
 
 logger:
   # Path and name for the log file. If not set sent to stdout

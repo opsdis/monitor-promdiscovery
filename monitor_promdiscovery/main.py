@@ -21,7 +21,7 @@
 import argparse
 import yaml
 import monitor_promdiscovery.prom as Prom
-import monitor_promdiscovery.monitor as Monitor
+from monitor_promdiscovery.system_factory import select_system
 import monitor_promdiscovery.log as log
 
 
@@ -29,10 +29,14 @@ def main():
     parser = argparse.ArgumentParser(description='monitor-promdiscovery')
 
     parser.add_argument('-f', '--configfile',
-                        dest="configfile", help="configuration file")
+                        dest="configfile", help="Configuration file")
 
     parser.add_argument('-F', '--force', action="store_true",
-                    dest="force", help="force write of service discovery file")
+                        dest="force", help="Force write of service discovery file")
+
+    parser.add_argument('-s', '--system',
+                        dest="system",
+                        help="System to discover. Will override configuration. Supported are op5monitor and icinga2")
 
     args = parser.parse_args()
 
@@ -43,25 +47,34 @@ def main():
 
     config = read_config(config_file)
 
+    # Override system property in config
+    if args.system:
+        config['system'] = args.system
+
     log.configure_logger(config)
     log.info("Start synchronizing")
-    monitor = Monitor.MonitorConfig(config)
+
+    if 'system' in config and select_system(config['system']):
+        monitor = select_system(config['system'])(config)
+    else:
+        log.error("Not a valid system {}".format(config['system']))
+        exit(1)
+
     promdis = Prom.PromDis(config, monitor.get_hosts_by_hostgroup())
 
-    # print (promdis.match())
     if not promdis.match() or args.force:
         promdis.update_targets()
 
 
 def read_config(config_file: str) -> dict:
-    '''
+    """
     Read configuration file
     :param config_file:
     :return:
-    '''
+    """
     try:
-        ymlfile = open(config_file, 'r')
-        config = yaml.load(ymlfile, Loader=yaml.SafeLoader)
+        with open(config_file, 'r') as ymlfile:
+            config = yaml.load(ymlfile, Loader=yaml.SafeLoader)
     except (FileNotFoundError, IOError):
         print("Config file {} not found".format(config_file))
         exit(1)

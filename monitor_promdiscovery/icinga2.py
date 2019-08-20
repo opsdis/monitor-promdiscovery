@@ -27,15 +27,15 @@ from monitor_promdiscovery.system_request import SystemRequest as Request
 requests.packages.urllib3.disable_warnings()
 
 
-class MonitorConfig(HostByHostgroup):
-    prefix = "op5monitor"
+class Icincga2Config(HostByHostgroup):
+    prefix = 'icinga2'
 
     def __init__(self, monitor):
-        self.connection = factory(MonitorConfig.prefix, monitor)
+        self.connection = factory(Icincga2Config.prefix, monitor)
 
-        self.connection.headers = {'Content-Type': 'application/json'}
+        self.connection.headers = {'Content-Type': 'application/json', 'X-HTTP-Method-Override': 'GET'}
 
-        self.hostgroup = monitor[MonitorConfig.prefix]['hostgroup']
+        self.hostgroup = monitor[Icincga2Config.prefix]['hostgroup']
 
     def get_hosts_by_hostgroup(self) -> list:
         """
@@ -52,14 +52,16 @@ class MonitorConfig(HostByHostgroup):
             all_hostgroups = self.hostgroup
 
         for hostgroup in all_hostgroups:
+            body = {"attrs": ["__name", "name"],
+                    "filter": '\"{}\" in host.groups'.format(hostgroup)}
 
             request = Request(self.connection)
-            response = request.get(
-                '/api/filter/query?query=[hosts]+groups>="{}"&columns=name&limit={}'.format(hostgroup, 10000))
+            response = request.post('/v1/objects/hosts', body)
 
             hosts_entries = json.loads(response)
 
-            for host_entry in hosts_entries:
-                hosts.add(host_entry['name'])
+
+            for host_entry in hosts_entries['results']:
+                hosts.add(host_entry['attrs']['name'])
 
         return list(hosts)

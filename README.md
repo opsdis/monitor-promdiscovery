@@ -4,21 +4,32 @@ monitor-promdiscovery
 ------------------------
 
 # Overview
-The *monitor-promdiscovery* tool generate file-based service discovery files for Prometheus and the [monitor-exporter](https://bitbucket.org/opsdis/monitor-exporter). 
-The tool is typical ran from cron or equivalent tools to check in Op5 Monitor for hosts service that should be scraped for performance metrics by *monitor-exporter*.  For a host to be detected it must be part of a special hostgroup, default to `monitor-exporter`, but can of course be configured.
+The *monitor-promdiscovery* tool generate file-based service discovery files for Prometheus, for the [monitor-exporter](https://bitbucket.org/opsdis/monitor-exporter) 
+and [icinga2-exporter](https://bitbucket.org/opsdis/icinga2-exporter)
+The tool is typical ran from cron or equivalent tools to check in Op5 Monitor or Icinga2 for hosts service that should be scraped for performance metrics by the exporters.  
+For a host to be detected it must be part of a hostgroup or hostgroups that is defined in the configuration file.
 
 # Flow
 
 ![Flow overview](https://bitbucket.org/opsdis/monitor-promdiscovery/raw/master/doc/overview.png)
 
  1. *monitor-promdiscovery* is executed on regular interval, e.g. every minute, by cron.
- 2. *monitor-promdiscovery* do a filter query against configured Monitor instance for all host that is part of a specific hostgroup. All hosts in the hostgroup will by the *monitor-exporter* be scraped for all its services performance data. 
+ 2. *monitor-promdiscovery* do a filter query against configured Monitor instance for all host that is part of a specific hostgroup. All hosts in the hostgroup(s) will by the 
+ *monitor-exporter* or *icinga2-exporter* be scraped for all its services performance data. 
  3. *monitor-promdiscovery* check against the configured file-based discovery if any host from the above call are new or not existing anymore.
  4. Only if there is not a match the file-based discovery file will be updated
  5. If the file is updated, Prometheus will reload the files configuration.
 
-# Running 
+# Running
+## Only use configuration file 
+
 	python -m monitor_promdiscovery -f ./config.yml
+
+## Override system property in the configuration file 
+
+	python -m monitor_promdiscovery -f ./config.yml -s <system>
+	
+> Where *<system>* can be either icinga2 or monitor
 	
 # Installing
 1. Check out the git repo.
@@ -34,31 +45,57 @@ The tool is typical ran from cron or equivalent tools to check in Op5 Monitor fo
  
     `pip install dist/monitor-promdiscovery-X.Y.Z.tar.gz`
      
-5. Run
-
-    `python -m monitor_promdiscovery -f some_config.yml`
-
-
 
 
 # Configuration
-The *monitor-promdiscovery* configuration file should be self explained:
+The *monitor-promdiscovery* configuration file should be rather self explained. 
+
+>Not both icinga2 and op5monitor has to be configured of course. If both are used, use the -s switch instead of configure
+>system in the property file. In the below config executing without -s <system> the icinga2 entry will be used.
+
 ```yaml
+# The system can be either op5monitor or icinga2 
+system: icinga2
 
 op5monitor:  
   url: https://monitor.local  
   user: monitor  
   passwd: monitor  
+  # Connection timeout - default 5
+  # timeout: 5
+  # Verify ssl - default False
+  # verify: False
+
   # The hostgroup used to select hosts as targets  
-  hostgroup: prometheus  
-  
-prometheus:  
-  # path where to create the file-based discovery file  
-  sd_file: <sd_directory>/monitor_sd.yml  
-  # Additional labels to tag metrics with  
-  labels:  
-    source: monitor  
-    env: prod
+  hostgroup: prometheus    
+  prometheus:  
+    # path where to create the file-based discovery file - must be set  
+    sd_file: <sd_directory>/monitor_sd.yml  
+    # Additional labels to tag metrics with - optional
+    labels:  
+      source: monitor  
+      env: prod
+
+icinga2:
+  url: https://127.0.0.1:5665
+  user: root
+  passwd: cf593406ffcfd2ef
+  # Connection timeout - default 5
+  # timeout: 5
+  # Verify ssl - default False
+  # verify: False
+
+  # The hostgroup used to select hosts as targets
+  hostgroup: 
+    - prometheus
+    - linux_servers
+  prometheus:
+    # path where to create the file-based discovery file - must be set
+    sd_file: /home/andersh/programs/prometheus/sd/icinga2_sd.yml
+    # Additional labels to tag metrics with - optional
+    labels:
+      source: icinga2
+      env: prod
 
 logger:
   # Path and name for the log file. If not set sent to stdout
@@ -69,6 +106,8 @@ logger:
   #level: INFO
 
 ``` 
+
+> The hostgroup property can be both a single value or a list of different hostgroups as shown above.
 
 ## Promethues configuration
 The Prometheus configuration file would typical have the following job configuration in the scrape_configs section for the *monitor-exporter*:  
@@ -90,6 +129,25 @@ The Prometheus configuration file would typical have the following job configura
         replacement: localhost:5000
 
 ```
+And for icinga2 the the format is almost the same:
+```yaml
+  - job_name: 'icinga2'
+    scrape_interval: 2m
+    metrics_path: /metrics
+    file_sd_configs:
+    - files:
+      - 'sd/icinga2_sd.yml'
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        # The address for the monitor-exporter
+        replacement: localhost:5000
+```
+
+> The `file_sd_configs` must have the same filename as created by the tool, as defined in the configuration file. 
 
 # System requirement
 Python 3.6

@@ -44,7 +44,6 @@ def configure_logger(config):
 
 def read_config(config):
     log_filename = None
-    format = None
     log_level = 'INFO'
     if 'logger' in config:
         if 'logfile' in config['logger']:
@@ -64,6 +63,10 @@ def warn(message, json_dict=None):
 
 def info(message, json_dict=None):
     logit(logger.info, json_dict, message)
+
+
+def debug(message, json_dict=None):
+    logit(logger.debug, json_dict, message)
 
 
 def logit(log_func, json_dict, message):

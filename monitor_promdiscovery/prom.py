@@ -22,14 +22,18 @@ import os
 import yaml
 import monitor_promdiscovery.log as log
 
+
 class PromDis(object):
 
     def __init__(self, config, monitor_hosts: list):
-        self.file_name = config['prometheus']['sd_file']
-        if 'labels' in config['prometheus']:
-            self.labels = config['prometheus']['labels']
-        else:
-            self.labels = {}
+        if 'system' in config:
+            system = config['system']
+            self.file_name = config[system]['prometheus']['sd_file']
+            if 'labels' in config[system]['prometheus']:
+                self.labels = config[system]['prometheus']['labels']
+            else:
+                self.labels = {}
+
         self.monitor_hosts = monitor_hosts
         self.prom_targets = []
         self.set_of_targets = set()
@@ -48,30 +52,31 @@ class PromDis(object):
             self.set_of_monitor_hosts = set(self.monitor_hosts)
 
     def match(self) -> bool:
-        '''
+        """
         Match if the current target hosts are the same as the one you got from Monitor
         :return:
-        '''
+        """
         if self.set_of_targets == self.set_of_monitor_hosts and \
                 self.existing_labels == self.labels:
-            log.info("Monitor and service discovery file match - {} target entries".format(len(self.set_of_monitor_hosts)))
+            log.info(
+                "Monitor and service discovery file match - {} target entries".format(len(self.set_of_monitor_hosts)))
             return True
-        log.info("Monitor and service discovery file not match - {} target entries in Monitor and {} entries in service discovery".format(len(self.set_of_monitor_hosts),len(self.set_of_targets)))
+        log.info(
+            "Monitor and service discovery file not match - {} target entries in Monitor and {} entries in service discovery".format(
+                len(self.set_of_monitor_hosts), len(self.set_of_targets)))
         return False
 
     def update_targets(self):
-        '''
+        """
         Write a new sd_file
         :return:
-        '''
+        """
         try:
             with open(self.file_name, 'w') as filetowrite:
-                targets = {}
-                targets['labels'] = self.labels
-                targets['targets'] = sorted(self.monitor_hosts)
+                targets = {'labels': self.labels, 'targets': sorted(self.monitor_hosts)}
                 targets_list = [targets]
                 yaml.dump(targets_list, filetowrite, default_flow_style=False)
                 log.info("Service discovery file created {}".format(self.file_name))
-        except (Exception) as err:
+        except Exception as err:
             log.error("{}".format(str(err)))
             raise err
