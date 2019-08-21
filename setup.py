@@ -6,7 +6,7 @@ setup(
     packages=find_packages(),
     author='thenodon',
     author_email='anders@opsdis.com',
-    url='https://bitbucket.org/opsdis/monitor-promdiscovery',
+    url='https://github.com/opsdis/monitor-promdiscovery',
     license='GPLv3',
     include_package_data=True,
     zip_safe=False,
