@@ -11,7 +11,7 @@ For a host to be detected it must be part of a hostgroup or hostgroups that is d
 
 # Flow
 
-![Flow overview](https://bitbucket.org/opsdis/monitor-promdiscovery/raw/master/doc/overview.png)
+![Flow overview](https://github.com/opsdis/monitor-promdiscovery/raw/master/doc/overview.png)
 
  1. *monitor-promdiscovery* is executed on regular interval, e.g. every minute, by cron.
  2. *monitor-promdiscovery* do a filter query against configured Monitor instance for all host that is part of a specific hostgroup. All hosts in the hostgroup(s) will by the 
