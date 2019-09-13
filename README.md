@@ -4,21 +4,21 @@ monitor-promdiscovery
 ------------------------
 
 # Overview
-The *monitor-promdiscovery* tool generate file-based service discovery files for Prometheus, for the [monitor-exporter](https://bitbucket.org/opsdis/monitor-exporter) 
-and [icinga2-exporter](https://bitbucket.org/opsdis/icinga2-exporter)
-The tool is typical ran from cron or equivalent tools to check in Op5 Monitor or Icinga2 for hosts service that should be scraped for performance metrics by the exporters.  
-For a host to be detected it must be part of a hostgroup or hostgroups that is defined in the configuration file.
+The *monitor-promdiscovery* tool generate file-based service discovery files for Prometheus, for the [monitor-exporter](https://github.com/opsdis/monitor-exporter) 
+and [icinga2-exporter](https://github.com/opsdis/icinga2-exporter)
+The tool is typically run from cron or equivalent tool to check OP5 Monitor or Icinga2 for hosts service that should be scraped for performance metrics by the exporters.  
+For a host to be detected, it must be a part of a hostgroup or hostgroups that is defined in the configuration file.
 
 # Flow
 
 ![Flow overview](https://github.com/opsdis/monitor-promdiscovery/raw/master/doc/overview.png)
 
- 1. *monitor-promdiscovery* is executed on regular interval, e.g. every minute, by cron.
- 2. *monitor-promdiscovery* do a filter query against configured Monitor instance for all host that is part of a specific hostgroup. All hosts in the hostgroup(s) will by the 
- *monitor-exporter* or *icinga2-exporter* be scraped for all its services performance data. 
- 3. *monitor-promdiscovery* check against the configured file-based discovery if any host from the above call are new or not existing anymore.
+ 1. *monitor-promdiscovery* is executed at regular intervals, e.g. every minute, by cron.
+ 2. *monitor-promdiscovery* performs a filter query against the configured Monitor instance for all hosts that are part of a specific hostgroup. All hosts in the hostgroup(s) will be scraped for all their services' performance data
+ *monitor-exporter* or *icinga2-exporter*. 
+ 3. *monitor-promdiscovery* checks against the configured file-based discovery if any host from the above call is new or not existing anymore.
  4. Only if there is not a match the file-based discovery file will be updated
- 5. If the file is updated, Prometheus will reload the files configuration.
+ 5. If the file is updated, Prometheus will reload the configuration file.
 
 # Running
 ## Only use configuration file 
@@ -32,8 +32,8 @@ For a host to be detected it must be part of a hostgroup or hostgroups that is d
 > Where *<system>* can be either icinga2 or monitor
 	
 # Installing
-1. Check out the git repo.
-2. Install dependency
+1. Check out / clone the git repo.
+2. Install dependencies
     
     `pip install -r requirements.txt`
      
@@ -48,10 +48,10 @@ For a host to be detected it must be part of a hostgroup or hostgroups that is d
 
 
 # Configuration
-The *monitor-promdiscovery* configuration file should be rather self explained. 
+The *monitor-promdiscovery* configuration file should be rather self-explanatory. 
 
->Not both icinga2 and op5monitor has to be configured of course. If both are used, use the -s switch instead of configure
->system in the property file. In the below config executing without -s <system> the icinga2 entry will be used.
+>NB! Only icinga2 or op5monitor has to be configured. If both are used, use the -s switch instead of configure
+>system in the property file. Using the below config executing without specifiying -s <system>, the icinga2 entry will be used.
 
 ```yaml
 # The system can be either op5monitor or icinga2 
@@ -109,7 +109,7 @@ logger:
 
 > The hostgroup property can be both a single value or a list of different hostgroups as shown above.
 
-## Promethues configuration
+## Prometheus configuration
 The Prometheus configuration file would typical have the following job configuration in the scrape_configs section for the *monitor-exporter*:  
 ```yaml
 
@@ -129,7 +129,7 @@ The Prometheus configuration file would typical have the following job configura
         replacement: localhost:5000
 
 ```
-And for icinga2 the the format is almost the same:
+And the format for icinga2 is almost the same:
 ```yaml
   - job_name: 'icinga2'
     scrape_interval: 2m
@@ -152,6 +152,6 @@ And for icinga2 the the format is almost the same:
 # System requirement
 Python 3.6
 
-For required packages please review `requirements.txt`
+For required packages, please review `requirements.txt`
 
 
