@@ -11,3 +11,4 @@
 *.iml
 /venv/
 config_my.yml
+.coverage

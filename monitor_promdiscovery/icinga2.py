@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-    Copyright (C) 2019  Opsdis AB
+    Copyright (C) 2021  Opsdis AB
 
     This file is part of monitor-exporter.
 
@@ -18,8 +18,10 @@
     along with monitor-exporter.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-import requests
 import json
+
+import requests
+
 from monitor_promdiscovery.hosts_by_hostgroup import HostByHostgroup
 from monitor_promdiscovery.http_connection import factory as factory
 from monitor_promdiscovery.system_request import SystemRequest as Request
@@ -59,7 +61,6 @@ class Icincga2Config(HostByHostgroup):
             response = request.post('/v1/objects/hosts', body)
 
             hosts_entries = json.loads(response)
-
 
             for host_entry in hosts_entries['results']:
                 hosts.add(host_entry['attrs']['name'])

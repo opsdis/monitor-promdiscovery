@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-    Copyright (C) 2019  Opsdis AB
+    Copyright (C) 2021  Opsdis AB
 
     This file is part of monitor-exporter.
 
@@ -18,8 +18,8 @@
     along with monitor-exporter.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-import monitor_promdiscovery.monitor as Monitor
 import monitor_promdiscovery.icinga2 as Icinga2
+import monitor_promdiscovery.monitor as Monitor
 from monitor_promdiscovery.hosts_by_hostgroup import HostByHostgroup
 
 

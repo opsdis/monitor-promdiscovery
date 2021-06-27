@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-    Copyright (C) 2019  Opsdis AB
+    Copyright (C) 2021  Opsdis AB
 
     This file is part of monitor-exporter.
 
@@ -20,7 +20,7 @@
 """
 
 
-class HttpConnection(object):
+class HttpConnection:
 
     def __init__(self):
         self.url = ''

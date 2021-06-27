@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-    Copyright (C) 2019  Opsdis AB
+    Copyright (C) 2021  Opsdis AB
 
     This file is part of monitor-exporter.
 
@@ -19,10 +19,13 @@
 
 """
 import argparse
+
 import yaml
-import monitor_promdiscovery.prom as Prom
-from monitor_promdiscovery.system_factory import select_system
+
 import monitor_promdiscovery.log as log
+import monitor_promdiscovery.prom as Prom
+from monitor_promdiscovery.hosts_by_hostgroup import HostByHostgroup
+from monitor_promdiscovery.system_factory import select_system
 
 
 def main():
@@ -54,6 +57,7 @@ def main():
     log.configure_logger(config)
     log.info("Start synchronizing")
 
+    monitor: HostByHostgroup
     if 'system' in config and select_system(config['system']):
         monitor = select_system(config['system'])(config)
     else:

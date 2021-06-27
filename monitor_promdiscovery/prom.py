@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-    Copyright (C) 2019  Opsdis AB
+    Copyright (C) 2021  Opsdis AB
 
     This file is part of monitor-exporter.
 
@@ -19,7 +19,9 @@
 
 """
 import os
+
 import yaml
+
 import monitor_promdiscovery.log as log
 
 
