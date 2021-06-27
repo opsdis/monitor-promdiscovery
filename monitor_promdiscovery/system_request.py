@@ -18,12 +18,15 @@
     along with monitor-exporter.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-import requests
 import json
-import monitor_promdiscovery.log as log
-from requests.auth import HTTPBasicAuth
-from monitor_promdiscovery.http_connection import HttpConnection as Connection
 import time
+from typing import Dict, Any
+
+import requests
+from requests.auth import HTTPBasicAuth
+
+import monitor_promdiscovery.log as log
+from monitor_promdiscovery.http_connection import HttpConnection as Connection
 
 requests.packages.urllib3.disable_warnings()
 
@@ -67,7 +70,7 @@ class SystemRequest:
             request_time = int((time.time() - start_time) * 1000) / 1000
             log.info_response_time("Response time {}".format(self.connection.url), request_time)
 
-    def post(self, path: str, body: str) -> dict:
+    def post(self, path: str, body: Dict[str, Any]) -> bytes:
         start_time = time.time()
         url = self.connection.url + path
         try:
