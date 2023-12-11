@@ -65,3 +65,31 @@ class MonitorConfig(HostByHostgroup):
                 hosts.add(host_entry['name'])
 
         return list(hosts)
+
+    def get_hosts_by_servicegroup(self) -> list:
+        """
+        Get all hosts in a specific servicegroup.
+        Return from Monitor is a json list e.g. [{"name":"google.se"},{"name":"sunet.se"}]
+        :return:
+        """
+
+        hosts = set()
+        all_servicegroups = []
+        if type(self.hostgroup) == str:
+            all_servicegroups.append(self.hostgroup)
+        else:
+            all_servicegroups = self.hostgroup
+
+        for servicegroup in all_servicegroups:
+
+            request = Request(self.connection)
+            response = request.get(
+                '/api/filter/query?query=[services]+groups>="{}"&'
+                'columns=host.display_name&limit={}'.format(servicegroup, 10000))
+
+            hosts_entries = json.loads(response)
+
+            for host_entry in hosts_entries:
+                hosts.add(host_entry['host']['display_name'])
+
+        return list(hosts)

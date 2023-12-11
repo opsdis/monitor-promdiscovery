@@ -64,7 +64,7 @@ def main():
         log.error("Not a valid system {}".format(config['system']))
         exit(1)
 
-    promdis = Prom.PromDis(config, monitor.get_hosts_by_hostgroup())
+    promdis = Prom.PromDis(config, monitor.get_hosts_by_servicegroup())
 
     if not promdis.match() or args.force:
         promdis.update_targets()

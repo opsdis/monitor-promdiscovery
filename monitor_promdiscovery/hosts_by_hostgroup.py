@@ -24,5 +24,5 @@ import abc
 class HostByHostgroup(metaclass=abc.ABCMeta):
 
     @abc.abstractmethod
-    def get_hosts_by_hostgroup(self) -> list:
+    def get_hosts_by_servicegroup(self) -> list:
         pass
