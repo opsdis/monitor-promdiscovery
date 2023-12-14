@@ -11,6 +11,7 @@ scraped for performance metrics by the exporters.
 For a host to be detected, it must be a part of hostgroup(s) or servicegroup(s) that is defined in the configuration 
 file. For a servicegroup(s) configuration all hosts that has at least on service in the configured servicegroup(s) will
 be added.
+> Servicegroups configuration is not supported for icinga2
 
 # Flow
 
