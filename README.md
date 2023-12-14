@@ -4,10 +4,13 @@ monitor-promdiscovery
 ------------------------
 
 # Overview
-The *monitor-promdiscovery* tool generate file-based service discovery files for Prometheus, for the [monitor-exporter](https://github.com/opsdis/monitor-exporter) 
-and [icinga2-exporter](https://github.com/opsdis/icinga2-exporter)
-The tool is typically run from cron or equivalent tool to check OP5 Monitor or Icinga2 for hosts service that should be scraped for performance metrics by the exporters.  
-For a host to be detected, it must be a part of a hostgroup or hostgroups that is defined in the configuration file.
+The *monitor-promdiscovery* tool generate file-based service discovery files for Prometheus, for the 
+[monitor-exporter](https://github.com/opsdis/monitor-exporter) and [icinga2-exporter](https://github.com/opsdis/icinga2-exporter).
+The tool is typically run from cron or equivalent tool to check OP5 Monitor or Icinga2 for hosts service that should be 
+scraped for performance metrics by the exporters.  
+For a host to be detected, it must be a part of hostgroup(s) or servicegroup(s) that is defined in the configuration 
+file. For a servicegroup(s) configuration all hosts that has at least on service in the configured servicegroup(s) will
+be added.
 
 # Flow
 
@@ -66,8 +69,13 @@ op5monitor:
   # Verify ssl - default False
   # verify: False
 
-  # The hostgroup used to select hosts as targets  
-  hostgroup: prometheus    
+  # The hostgroup(s) used to select hosts as targets  
+  hostgroup: 
+    - prometheus
+  # The servicegroup(s) used to select hosts as targets
+  # Will include all hosts that has at least on service in the configured servicegroup(s)
+  servicegroup:
+    - servicepoint
   prometheus:  
     # path where to create the file-based discovery file - must be set  
     sd_file: <sd_directory>/monitor_sd.yml  

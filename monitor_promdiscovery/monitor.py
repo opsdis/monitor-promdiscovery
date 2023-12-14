@@ -22,14 +22,14 @@ import json
 
 import requests
 
-from monitor_promdiscovery.hosts_by_hostgroup import HostByHostgroup
+from monitor_promdiscovery.hosts_by_hostgroup import HostByGroup
 from monitor_promdiscovery.http_connection import factory as factory
 from monitor_promdiscovery.system_request import SystemRequest as Request
 
 requests.packages.urllib3.disable_warnings()
 
 
-class MonitorConfig(HostByHostgroup):
+class MonitorConfig(HostByGroup):
     prefix = "op5monitor"
 
     def __init__(self, monitor):
@@ -37,7 +37,15 @@ class MonitorConfig(HostByHostgroup):
 
         self.connection.headers = {'Content-Type': 'application/json'}
 
-        self.hostgroup = monitor[MonitorConfig.prefix]['hostgroup']
+        self.have_hostgroup = False
+        if 'hostgroup' in monitor[MonitorConfig.prefix]:
+            self.have_hostgroup = True
+            self.hostgroup = monitor[MonitorConfig.prefix]['hostgroup']
+
+        self.have_servicegroup = False
+        if 'servicegroup' in monitor[MonitorConfig.prefix]:
+            self.have_servicegroup = True
+            self.servicegroup = monitor[MonitorConfig.prefix]['servicegroup']
 
     def get_hosts_by_hostgroup(self) -> list:
         """
@@ -45,6 +53,8 @@ class MonitorConfig(HostByHostgroup):
         Return from Monitor is a json list e.g. [{"name":"google.se"},{"name":"sunet.se"}]
         :return:
         """
+        if not self.have_hostgroup:
+            return []
 
         hosts = set()
         all_hostgroups = []
@@ -63,5 +73,36 @@ class MonitorConfig(HostByHostgroup):
 
             for host_entry in hosts_entries:
                 hosts.add(host_entry['name'])
+
+        return list(hosts)
+
+    def get_hosts_by_servicegroup(self) -> list:
+        """
+        Get all hosts in a specific servicegroup.
+        Return from Monitor is a json list e.g. [{"name":"google.se"},{"name":"sunet.se"}]
+        :return:
+        """
+
+        if not self.have_servicegroup:
+            return []
+
+        hosts = set()
+        all_servicegroups = []
+        if type(self.servicegroup) == str:
+            all_servicegroups.append(self.servicegroup)
+        else:
+            all_servicegroups = self.servicegroup
+
+        for servicegroup in all_servicegroups:
+
+            request = Request(self.connection)
+            response = request.get(
+                '/api/filter/query?query=[services]+groups>="{}"&'
+                'columns=host.display_name&limit={}'.format(servicegroup, 10000))
+
+            hosts_entries = json.loads(response)
+
+            for host_entry in hosts_entries:
+                hosts.add(host_entry['host']['display_name'])
 
         return list(hosts)
