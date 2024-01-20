@@ -27,6 +27,8 @@ setup(
     include_package_data=True,
     zip_safe=False,
     description='A Prometheus file based service discovery for Icinga2 and OP5 Monitor',
+    long_description=open('README.md').read(),
+    long_description_content_type='text/markdown',
     install_requires=read('requirements.txt').split(),
     python_requires='>=3.6',
 )
