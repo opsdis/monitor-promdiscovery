@@ -23,11 +23,17 @@ import os
 import yaml
 
 import monitor_promdiscovery.log as log
+from monitor_promdiscovery.hosts_by_hostgroup import HostByGroup
 
 
 class PromDis(object):
 
-    def __init__(self, config, monitor_hosts: list):
+    def __init__(self, config, monitor_system: HostByGroup):
+
+        monitor_hosts = []
+        monitor_hosts.extend(monitor_system.get_hosts_by_hostgroup())
+        monitor_hosts.extend(monitor_system.get_hosts_by_servicegroup())
+
         if 'system' in config:
             system = config['system']
             self.file_name = config[system]['prometheus']['sd_file']
@@ -63,8 +69,7 @@ class PromDis(object):
             log.info(
                 "Monitor and service discovery file match - {} target entries".format(len(self.set_of_monitor_hosts)))
             return True
-        log.info(
-            "Monitor and service discovery file not match - {} target entries in Monitor and {} entries in service discovery".format(
+        log.info("Monitor and service discovery file not match - {} target entries in Monitor and {} entries in service discovery".format(
                 len(self.set_of_monitor_hosts), len(self.set_of_targets)))
         return False
 

@@ -20,10 +20,10 @@
 """
 import monitor_promdiscovery.icinga2 as Icinga2
 import monitor_promdiscovery.monitor as Monitor
-from monitor_promdiscovery.hosts_by_hostgroup import HostByHostgroup
+from monitor_promdiscovery.hosts_by_hostgroup import HostByGroup
 
 
-def select_system(system: str) -> HostByHostgroup:
-    supported_system = {'icinga2': Icinga2.Icincga2Config,
+def select_system(system: str) -> HostByGroup:
+    supported_system = {'icinga2': Icinga2.Icinga2Config,
                         'op5monitor': Monitor.MonitorConfig}
     return supported_system.get(system, None)

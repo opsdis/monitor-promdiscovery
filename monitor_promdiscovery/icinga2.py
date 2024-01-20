@@ -22,22 +22,30 @@ import json
 
 import requests
 
-from monitor_promdiscovery.hosts_by_hostgroup import HostByHostgroup
+from monitor_promdiscovery.hosts_by_hostgroup import HostByGroup
 from monitor_promdiscovery.http_connection import factory as factory
 from monitor_promdiscovery.system_request import SystemRequest as Request
 
 requests.packages.urllib3.disable_warnings()
 
 
-class Icincga2Config(HostByHostgroup):
+class Icinga2Config(HostByGroup):
     prefix = 'icinga2'
 
     def __init__(self, monitor):
-        self.connection = factory(Icincga2Config.prefix, monitor)
+        self.connection = factory(Icinga2Config.prefix, monitor)
 
         self.connection.headers = {'Content-Type': 'application/json', 'X-HTTP-Method-Override': 'GET'}
 
-        self.hostgroup = monitor[Icincga2Config.prefix]['hostgroup']
+        self.have_hostgroup = False
+        if 'hostgroup' in monitor[Icinga2Config.prefix]:
+            self.have_hostgroup = True
+            self.hostgroup = monitor[Icinga2Config.prefix]['hostgroup']
+
+        self.have_servicegroup = False
+        if 'servicegroup' in monitor[Icinga2Config.prefix]:
+            self.have_servicegroup = True
+            self.servicegroup = monitor[Icinga2Config.prefix]['servicegroup']
 
     def get_hosts_by_hostgroup(self) -> list:
         """
@@ -45,6 +53,8 @@ class Icincga2Config(HostByHostgroup):
         Return from Monitor is a json list e.g. [{"name":"google.se"},{"name":"sunet.se"}]
         :return:
         """
+        if not self.have_hostgroup:
+            return []
 
         hosts = set()
         all_hostgroups = []
@@ -66,3 +76,8 @@ class Icincga2Config(HostByHostgroup):
                 hosts.add(host_entry['attrs']['name'])
 
         return list(hosts)
+
+    def get_hosts_by_servicegroup(self) -> list:
+        if not self.have_servicegroup:
+            return []
+        return []

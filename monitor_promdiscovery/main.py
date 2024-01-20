@@ -24,7 +24,7 @@ import yaml
 
 import monitor_promdiscovery.log as log
 import monitor_promdiscovery.prom as Prom
-from monitor_promdiscovery.hosts_by_hostgroup import HostByHostgroup
+from monitor_promdiscovery.hosts_by_hostgroup import HostByGroup
 from monitor_promdiscovery.system_factory import select_system
 
 
@@ -57,14 +57,14 @@ def main():
     log.configure_logger(config)
     log.info("Start synchronizing")
 
-    monitor: HostByHostgroup
+    monitor_system: HostByGroup
     if 'system' in config and select_system(config['system']):
-        monitor = select_system(config['system'])(config)
+        monitor_system = select_system(config['system'])(config)
     else:
         log.error("Not a valid system {}".format(config['system']))
         exit(1)
 
-    promdis = Prom.PromDis(config, monitor.get_hosts_by_hostgroup())
+    promdis = Prom.PromDis(config, monitor_system)
 
     if not promdis.match() or args.force:
         promdis.update_targets()
